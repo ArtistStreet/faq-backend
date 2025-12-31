@@ -2,6 +2,25 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Group {
+  id: Int!
+  name: String
+  description: String
+  parent_id: Int
+}
+
 type Query {
-  hello: String!
+  groups: [Group!]!
+}
+
+type Mutation {
+  createGroup(name: String!, description: String, parent_id: Int): Group!
+  updateGroup(id: Int!, input: UpdateGroupInput!): Group!
+  deleteGroup(id: Int!): Boolean!
+}
+
+input UpdateGroupInput {
+  name: String
+  description: String
+  parent_id: Int
 }
