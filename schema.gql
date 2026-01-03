@@ -2,25 +2,77 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Role {
+  id: Int!
+  name: String!
+  groups: [Group!]
+}
+
+type Faq {
+  id: Int!
+  question: String!
+  answer: String!
+  categories: [String!]
+  group: Group
+  group_id: Float!
+}
+
 type Group {
   id: Int!
-  name: String
+  name: String!
   description: String
   parent_id: Int
+  parent: Group
+  children: [Group!]
+  hasChildren: Boolean
+  roles: [Role!]
+  faqs: [Faq!]
 }
 
 type Query {
-  groups: [Group!]!
+  rootGroups: [Group!]!
+  groupChildren(parentId: Int!): [Group!]!
+  groupList: [Group!]!
+  faqList: [Faq!]!
+  roleList: [Role!]!
 }
 
 type Mutation {
-  createGroup(name: String!, description: String, parent_id: Int): Group!
+  createGroup(input: CreateGroupInput!): Group!
   updateGroup(id: Int!, input: UpdateGroupInput!): Group!
   deleteGroup(id: Int!): Boolean!
+  createFaq(input: CreateFaqInput!): Faq!
+  updateFaq(id: Int!, input: UpdateFaqInput!): Faq!
+  deleteFaq(id: Int!): Boolean!
+  createRole(name: String!): Role!
+  deleteRole(id: Int!): Boolean!
+}
+
+input CreateGroupInput {
+  name: String!
+  description: String
+  parent_id: Int
+  roleIds: [Int!]
 }
 
 input UpdateGroupInput {
   name: String
   description: String
   parent_id: Int
+  roleIds: [Int!]
+  faq: [String!]
+}
+
+input CreateFaqInput {
+  question: String!
+  answer: String!
+  categories: [String!]
+  group_id: Int
+}
+
+input UpdateFaqInput {
+  question: String
+  answer: String
+  categories: [String!]
+  group_id: Int
 }
