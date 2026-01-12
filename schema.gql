@@ -2,44 +2,97 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Role {
-  id: Int!
-  name: String!
-  groups: [Group!]
-}
-
 type Faq {
   id: Int!
   question: String!
   answer: String!
-  categories: [String!]
-  group: Group
+  categories: [String!]!
+  group: GroupEntity
   group_id: Float!
 }
 
-type Group {
+type GroupEntity {
   id: Int!
   name: String!
   description: String
   parent_id: Int
-  parent: Group
-  children: [Group!]
+  parent: GroupEntity
+  children: [GroupEntity!]
   hasChildren: Boolean
-  roles: [Role!]
+  role: Int!
   faqs: [Faq!]
 }
 
+type GroupModel {
+  totalCount: Int!
+  totalPages: Int!
+  currentPage: Int!
+  data: [GroupEntity!]!
+}
+
+type Role {
+  id: Int!
+  name: String!
+  description: String
+}
+
 type Query {
-  rootGroups: [Group!]!
-  groupChildren(parentId: Int!): [Group!]!
-  groupList: [Group!]!
-  faqList: [Faq!]!
+  rootGroups(input: BasePaginationInput!): GroupModel!
+  faqList(search: String, group_id: Int): [Faq!]!
   roleList: [Role!]!
 }
 
+input BasePaginationInput {
+  search: String
+
+  """
+  Filter format: key:operator(value). Supported operators:
+  
+      - "="  → Equal (e.g., status:=(active))
+   
+      - "!=" → Not Equal (e.g., role:!=(admin))
+   
+      - ">"  → Greater Than (e.g., price:>(100))
+   
+      - "<"  → Less Than (e.g., age:<(30))
+   
+      - ">=" → Greater Than or Equal (e.g., rating:>=(4.5))
+   
+      - "<=" → Less Than or Equal (e.g., discount:<=(20))
+   
+      - "~"  → LIKE (e.g., name:~(John)) (case-insensitive search)
+   
+      - "!~" → NOT LIKE (e.g., description:!~(test))
+   
+      - "[]" → IN (e.g., category:[](electronics,clothing))
+   
+      - "![]" → NOT IN (e.g., tag:![](sale,new))
+  """
+  filters: [String!]
+
+  """
+  Sorting format: "field:direction"
+  
+      - `field`: The column name to sort by (e.g., "name", "created_at").
+  
+      - `direction`: Sorting order, either "ASC" (ascending) or "DESC" (descending).
+  
+      Examples:
+  
+      - "name:ASC"        → Sort by `name` in ascending order.
+  
+      - "created_at:DESC" → Sort by `created_at` in descending order.
+  
+      - "price:ASC"       → Sort by `price` in ascending order.
+  """
+  sort: String
+  page: Int! = 1
+  limit: Int! = 20
+}
+
 type Mutation {
-  createGroup(input: CreateGroupInput!): Group!
-  updateGroup(id: Int!, input: UpdateGroupInput!): Group!
+  createGroup(input: CreateGroupInput!): GroupEntity!
+  updateGroup(id: Int!, input: UpdateGroupInput!): GroupEntity!
   deleteGroup(id: Int!): Boolean!
   createFaq(input: CreateFaqInput!): Faq!
   updateFaq(id: Int!, input: UpdateFaqInput!): Faq!
@@ -52,14 +105,20 @@ input CreateGroupInput {
   name: String!
   description: String
   parent_id: Int
-  roleIds: [Int!]
+  role: RoleName!
+}
+
+enum RoleName {
+  MANAGER
+  OFFICER
+  PRESIDENT
 }
 
 input UpdateGroupInput {
   name: String
   description: String
   parent_id: Int
-  roleIds: [Int!]
+  role: RoleName!
   faq: [String!]
 }
 

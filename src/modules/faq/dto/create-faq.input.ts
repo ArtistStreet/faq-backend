@@ -10,7 +10,7 @@ export class CreateFaqInput {
      answer: string;
 
      @Field(() => [String], { nullable: true })
-     categories?: string[];
+     categories: string[];
 
      @Field(() => Int, { nullable: true })
      group_id?: number;

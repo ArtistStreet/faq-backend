@@ -5,6 +5,11 @@ import { Faq } from 'src/entities/faq.entity';
 import { Repository } from 'typeorm';
 import { CreateFaqInput, UpdateFaqInput } from './dto/create-faq.input';
 
+interface FindAllOptions {
+     search?: string;
+     group_id?: number;
+}
+
 @Injectable()
 export class FaqService {
      constructor(
@@ -12,17 +17,29 @@ export class FaqService {
           private readonly faqRepository: Repository<Faq>,
      ) { }
 
-     async findAll(): Promise<Faq[]> {
-          return this.faqRepository.find({
-               // order: { question: 'ASC' },
-          });
+     async findAll(options: FindAllOptions = {}): Promise<Faq[]> {
+          const qb = this.faqRepository.createQueryBuilder('faq');
+
+          if (options.group_id) {
+               qb.andWhere('faq.group_id = :group_id', { group_id: options.group_id });
+          }
+
+          if (options.search) {
+               const searchTerm = `%${options.search.trim()}%`;
+               qb.andWhere(
+                    '(faq.question ILIKE :search OR faq.answer ILIKE :search)',
+                    { search: searchTerm }
+               );
+          }
+
+          return qb.orderBy('faq.id', 'DESC').getMany();
      }
 
      async create(input: CreateFaqInput): Promise<Faq> {
           const faq = this.faqRepository.create({
                question: input.question,
                answer: input.answer,
-               categories: input.categories || [],
+               categories: input.categories,
                group: input.group_id ? { id: input.group_id } as any : null,
           });
 

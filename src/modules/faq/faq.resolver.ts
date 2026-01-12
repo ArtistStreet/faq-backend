@@ -9,8 +9,11 @@ export class FaqResolver {
 
      // list ra toan bo group(khong toi uu neu nhieu)
      @Query(() => [Faq])
-     faqList() {
-          return this.faqService.findAll();
+     faqList(
+          @Args('search', { type: () => String, nullable: true }) search?: string,
+          @Args('group_id', { type: () => Int, nullable: true }) group_id?: number,
+     ) {
+          return this.faqService.findAll({ search, group_id });
      }
 
      @Mutation(() => Faq)

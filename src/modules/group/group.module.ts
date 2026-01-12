@@ -3,10 +3,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GroupResolver } from './group.resolver';
 import { GroupService } from './group.service';
-import { Group } from '../../entities/group.entity';
+import { GroupEntity } from '../../entities/group.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Group])], // ← Quan trọng: đăng ký entity
-  providers: [GroupResolver, GroupService],
+     imports: [TypeOrmModule.forFeature([GroupEntity])], // ← Quan trọng: đăng ký entity
+     providers: [GroupResolver, GroupService],
 })
-export class GroupModule {}
+export class GroupModule { }
