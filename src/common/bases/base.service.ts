@@ -128,7 +128,7 @@ export class BaseService<T extends { id: number }> {
      /**
       * ✅ Hàm xây dựng query chung
       */
-     private buildQuery(options: BaseInput | BasePaginationInput): SelectQueryBuilder<T> {
+     public buildQuery(options: BaseInput | BasePaginationInput): SelectQueryBuilder<T> {
           const { search, filters, sort } = options;
           let query = this.repository.createQueryBuilder('entity');
 
@@ -170,7 +170,7 @@ export class BaseService<T extends { id: number }> {
      /**
       * ✅ Hàm áp dụng lọc dữ liệu, hỗ trợ relation và kiểm tra NULL
       */
-     private applyFilter(query: SelectQueryBuilder<T>, filter: string, index: number) {
+     public applyFilter(query: SelectQueryBuilder<T>, filter: string, index: number) {
           const regex = /^(.+?):(=|!=|>=|<=|>|<|~|!~|\[]|!\[])\((.+)\)$/;
           const match = filter.match(regex);
           if (!match) return; // Bỏ qua nếu format không hợp lệ

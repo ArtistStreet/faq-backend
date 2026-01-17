@@ -1,11 +1,14 @@
 // entities/faq.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, BaseEntity, ManyToMany, JoinTable } from 'typeorm';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { GroupEntity } from './group.entity';
+import { SearchFields } from 'src/common/decorators/entity.decorators';
+import { CategoryEntity } from './category.entity';
 
 @ObjectType() // cho GraphQL
 @Entity('faqs') // tên bảng trong DB
-export class Faq {
+@SearchFields(['question', 'answer'])
+export class FaqEntity extends BaseEntity {
      @Field(() => Int)
      @PrimaryGeneratedColumn()
      id: number;
@@ -15,26 +18,36 @@ export class Faq {
      question: string;
 
      @Field()
-     @Column('text') // answer thường dài → dùng text thay vì varchar mặc định
+     @Column('text')
      answer: string;
 
-     // Nếu categories là nhiều danh mục (ví dụ: "Thanh toán, Giao hàng")
-     // → Dùng simple-array hoặc ManyToMany
-     // Cách 1: Lưu dạng chuỗi ngăn cách (đơn giản)
-     @Field(() => [String])
-     @Column('simple-array') // lưu ["Thanh toán", "Giao hàng"]
-     categories: string[];
-
-     // Cách 2: Nếu muốn quan hệ thật với entity Category → dùng ManyToMany (sau này)
+     @Field(() => [CategoryEntity], { nullable: true })
+     @ManyToMany(() => CategoryEntity, category => category.faq)
+     @JoinTable({
+          name: 'faq_category', // tao ten bang trung gian
+          joinColumn: {
+               name: 'faq_id',
+               referencedColumnName: 'id',
+          },
+          inverseJoinColumn: {
+               name: 'category_id',
+               referencedColumnName: 'id',
+          },
+     })
+     // faq_category
+     // faq_id(FK → faq.id)
+     // category_id(FK → category.id)
+     category: CategoryEntity[]; // khong phai cot trong db
 
      // Quan hệ với GroupEntity
-     @Field(() => GroupEntity, { nullable: true })
-     @ManyToOne(() => GroupEntity, (group) => group.faqs, { nullable: true, onDelete: 'SET NULL' })
-     @JoinColumn({ name: 'group_id' })
-     group?: GroupEntity;
+     // @Field(() => GroupEntity, { nullable: true })
+     // @ManyToOne(() => GroupEntity, (group) => group.faqs, { nullable: true, onDelete: 'SET NULL' })
+     // @JoinColumn({ name: 'group_id' })
+     // group?: GroupEntity;
 
-     // Cột group_id trong DB (không cần @Field vì đã có group)
-     @Field()
-     @Column({ name: 'group_id', nullable: true })
-     group_id?: number;
+     // // Cột group_id trong DB (không cần @Field vì đã có group)
+     // @Field()
+     // @Column({ name: 'group_id', nullable: true })
+     // group_id?: number;
+
 }

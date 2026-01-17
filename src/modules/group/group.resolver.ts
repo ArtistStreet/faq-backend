@@ -17,6 +17,13 @@ export class GroupResolver {
           return this.groupService.search(body);
      }
 
+     @Query(() => GroupModel)
+     async groupChildren(
+          @Args('id', { type: () => Int }) id: number,
+          @Args('input') body: BasePaginationInput): Promise<IPaginatedType<GroupEntity>> {
+          return this.groupService.findChildren(id, body);
+     }
+
      // @ResolveField(() => Boolean)
      // async hasChildren(@Parent() group: GroupEntity) {
      //      const count = await this.groupService.countChildren(group.id);

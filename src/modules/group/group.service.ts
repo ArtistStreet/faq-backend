@@ -6,6 +6,9 @@ import { GroupEntity } from '../../entities/group.entity';
 import { CreateGroupInput, UpdateGroupInput } from './dto/update-group.input';
 import { PaginatedGroup } from './dto/paginated-group.dto';
 import { BaseService } from 'src/common/bases/base.service';
+import { BasePaginationInput } from 'src/common/bases/base.input';
+import { IPaginatedType } from 'src/common/bases/base.model';
+import appConf from 'src/configs/app.conf';
 
 interface FindAllOptions {
      search?: string;
@@ -108,77 +111,7 @@ interface FindAllOptions {
 //           return group;
 //      }
 
-//      // async create(input: CreateGroupInput): Promise<GroupEntity> {
-//      //      const group = this.groupRepository.create({
-//      //           name: input.name, // bắt buộc có
-//      //           description: input.description,
-//      //      });
 
-//      //      if (input.parent_id != null) {
-//      //           group.parent = { id: input.parent_id } as GroupEntity;
-//      //      }
-
-//      //      // if (input.roleIds?.length) {
-//      //      //      group.roles = input.roleIds.map(id => ({ id } as Role));
-//      //      // }
-
-//      //      return this.groupRepository.save(group);
-//      // }
-
-//      async create(input: CreateGroupInput) {
-//           const group = this.groupRepository.create({
-//                name: input.name,
-//                description: input.description,
-//                parent: input.parent_id ? { id: input.parent_id } as GroupEntity : undefined,
-//                role: input.role,
-//           });
-//           return this.groupRepository.save(group);
-//      }
-
-//      async update(id: number, input: UpdateGroupInput): Promise<GroupEntity> {
-//           const group = await this.groupRepository.findOneOrFail({
-//                where: { id }
-//           });
-
-//           if (input.name !== undefined) group.name = input.name;
-//           if (input.description !== undefined) group.description = input.description;
-//           if (input.role !== undefined) group.role = input.role;
-
-//           return this.groupRepository.save(group);
-//      }
-
-//      // async update(
-//      //      id: number,
-//      //      input: UpdateGroupInput,
-//      // ): Promise<GroupEntity> {
-//      //      const group = await this.groupRepository.findOneOrFail({
-//      //           where: { id },
-//      //           relations: ['roles'], // load roles hiện tại nếu cần kiểm tra
-//      //      });
-
-//      //      if (input.name !== undefined) group.name = input.name;
-//      //      if (input.description !== undefined) group.description = input.description;
-
-//      //      if (input.parent_id !== undefined) {
-//      //           group.parent = input.parent_id ? { id: input.parent_id } as GroupEntity : undefined;
-//      //      }
-
-//      //      // Xử lý roles: chỉ khi có roleIds mới gửi lên
-//      //      // if (input.roleIds !== undefined) {
-//      //      //      group.roles = input.roleIds.map(rid => {
-//      //      //           const role = new Role();
-//      //      //           role.id = rid;
-//      //      //           return role;
-//      //      //      });
-//      //      // }
-
-//      //      return this.groupRepository.save(group);
-//      // }
-
-//      async delete(id: number): Promise<void> {
-//           await this.groupRepository.delete(id);
-//      }
-// }
 
 
 @Injectable()
@@ -190,7 +123,107 @@ export class GroupService extends BaseService<GroupEntity> {
           super(repo);
      }
 
-     // protected getSearchFields(): string[] {
-     //      return ['name', 'description'];
-     // }
+     async search(options: BasePaginationInput): Promise<IPaginatedType<GroupEntity>> {
+          const query = this.buildQuery(options);
+
+          const totalCount = await query.getCount();
+
+          const limit = options.limit ?? appConf.PAGE_DEFAULT;
+          const page = options.page ?? 1;
+          const skip = (page - 1) * limit;
+
+          const { entities, raw } = await query
+               .skip(skip)
+               .take(limit)
+               .getRawAndEntities();
+
+          entities.forEach((item, index) => {
+               item.hasChildren = raw[index].hasChildren;
+          });
+
+          return {
+               totalCount,
+               totalPages: Math.ceil(totalCount / limit),
+               currentPage: page,
+               data: entities,
+          };
+     }
+
+     async findChildren(
+          parentId: number,
+          options: BasePaginationInput
+     ): Promise<IPaginatedType<GroupEntity>> {
+
+          const qb = this.repo
+               .createQueryBuilder('entity')
+               .where('entity.parent_id = :parentId', { parentId });
+
+          // search
+          if (options.search) {
+               qb.andWhere('entity.name ILIKE :search', {
+                    search: `%${options.search}%`,
+               });
+          }
+
+          // filter role
+          if (options.filters?.length) {
+               options.filters.forEach((filter, index) =>
+                    this.applyFilter(qb, filter, index)
+               );
+          }
+
+          // count
+          const totalCount = await qb.getCount();
+
+          const limit = options.limit ?? 10;
+          const page = options.page ?? 1;
+          const skip = (page - 1) * limit;
+
+          // 👇 lấy children + hasChildren
+          qb.addSelect(subQuery => {
+               return subQuery
+                    .select('COUNT(1) > 0')
+                    .from(GroupEntity, 'child')
+                    .where('child.parent_id = entity.id');
+          }, 'hasChildren');
+
+          const { entities, raw } = await qb
+               .skip(skip)
+               .take(limit)
+               .getRawAndEntities();
+
+          entities.forEach((item, index) => {
+               item.hasChildren = raw[index].hasChildren;
+          });
+
+          return {
+               data: entities,
+               totalCount,
+               totalPages: Math.ceil(totalCount / limit),
+               currentPage: page,
+          };
+     }
+
+     public override buildQuery(options: BasePaginationInput) {
+          const { parentId } = options;
+
+          const query = super.buildQuery(options);
+
+          if (parentId === undefined) {
+               // lấy root
+               query.andWhere('entity.parent_id IS NULL');
+          } else {
+               // lấy con của node
+               query.andWhere('entity.parent_id = :parentId', { parentId });
+          }
+
+          query.addSelect(subQuery => {
+               return subQuery
+                    .select('COUNT(1) > 0')
+                    .from(GroupEntity, 'child')
+                    .where('child.parent_id = entity.id');
+          }, 'hasChildren');
+
+          return query;
+     }
 }

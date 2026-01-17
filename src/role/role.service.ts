@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Role } from 'src/entities/role.entity';
+import { RoleEntity } from 'src/entities/role.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class RoleService {
      constructor(
-          @InjectRepository(Role)
-          private readonly roleRepository: Repository<Role>,
+          @InjectRepository(RoleEntity)
+          private readonly roleRepository: Repository<RoleEntity>,
      ) { }
 
-     async findAll(): Promise<Role[]> {
+     async findAll(): Promise<RoleEntity[]> {
           return this.roleRepository.find({
                order: { name: 'ASC' },
           });
@@ -18,7 +18,7 @@ export class RoleService {
 
      async create(
           name: string,
-     ): Promise<Role> {
+     ): Promise<RoleEntity> {
           const group = await this.roleRepository.create({
                name,
           });

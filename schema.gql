@@ -2,15 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Faq {
-  id: Int!
-  question: String!
-  answer: String!
-  categories: [String!]!
-  group: GroupEntity
-  group_id: Float!
-}
-
 type GroupEntity {
   id: Int!
   name: String!
@@ -20,7 +11,6 @@ type GroupEntity {
   children: [GroupEntity!]
   hasChildren: Boolean
   role: Int!
-  faqs: [Faq!]
 }
 
 type GroupModel {
@@ -30,16 +20,45 @@ type GroupModel {
   data: [GroupEntity!]!
 }
 
-type Role {
+type CategoryEntity {
   id: Int!
   name: String!
   description: String
 }
 
+type FaqEntity {
+  id: Int!
+  question: String!
+  answer: String!
+  category: [CategoryEntity!]
+}
+
+type FaqModel {
+  totalCount: Int!
+  totalPages: Int!
+  currentPage: Int!
+  data: [FaqEntity!]!
+}
+
+type RoleEntity {
+  id: Int!
+  name: String!
+  description: String
+}
+
+type CategoryModel {
+  totalCount: Int!
+  totalPages: Int!
+  currentPage: Int!
+  data: [CategoryEntity!]!
+}
+
 type Query {
   rootGroups(input: BasePaginationInput!): GroupModel!
-  faqList(search: String, group_id: Int): [Faq!]!
-  roleList: [Role!]!
+  groupChildren(id: Int!, input: BasePaginationInput!): GroupModel!
+  faqList(input: BasePaginationInput!): FaqModel!
+  roleList: [RoleEntity!]!
+  categoryList(input: BasePaginationInput!): CategoryModel!
 }
 
 input BasePaginationInput {
@@ -86,6 +105,7 @@ input BasePaginationInput {
       - "price:ASC"       → Sort by `price` in ascending order.
   """
   sort: String
+  parentId: Int
   page: Int! = 1
   limit: Int! = 20
 }
@@ -94,11 +114,14 @@ type Mutation {
   createGroup(input: CreateGroupInput!): GroupEntity!
   updateGroup(id: Int!, input: UpdateGroupInput!): GroupEntity!
   deleteGroup(id: Int!): Boolean!
-  createFaq(input: CreateFaqInput!): Faq!
-  updateFaq(id: Int!, input: UpdateFaqInput!): Faq!
+  createFaq(input: CreateFaqInput!): FaqEntity!
+  updateFaq(id: Int!, input: UpdateFaqInput!): FaqEntity!
   deleteFaq(id: Int!): Boolean!
-  createRole(name: String!): Role!
+  createRole(name: String!): RoleEntity!
   deleteRole(id: Int!): Boolean!
+  createCategory(input: CreateCategoryInput!): CategoryEntity!
+  updateCategory(id: Int!, input: UpdateCategoryInput!): CategoryEntity!
+  deleteCategory(id: Int!): Boolean!
 }
 
 input CreateGroupInput {
@@ -125,13 +148,21 @@ input UpdateGroupInput {
 input CreateFaqInput {
   question: String!
   answer: String!
-  categories: [String!]
-  group_id: Int
+  categoryIds: [Int!]
 }
 
 input UpdateFaqInput {
   question: String
   answer: String
-  categories: [String!]
-  group_id: Int
+  categoryIds: [Int!]
+}
+
+input CreateCategoryInput {
+  name: String!
+  description: String
+}
+
+input UpdateCategoryInput {
+  name: String
+  description: String
 }

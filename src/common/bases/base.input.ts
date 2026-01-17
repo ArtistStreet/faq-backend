@@ -1,6 +1,7 @@
 import { Field, HideField, InputType, Int } from '@nestjs/graphql';
 import appConf from '../../configs/app.conf';
 import { IsArray, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { Column } from 'typeorm';
 
 @InputType()
 export class BaseInput {
@@ -41,6 +42,12 @@ export class BaseInput {
      @IsOptional()
      @IsString()
      sort?: string;
+
+     @Column({ default: false })
+     hasChildren: boolean;
+
+     @Field(() => Int, { nullable: true })
+     parentId?: number;
 }
 
 @InputType()

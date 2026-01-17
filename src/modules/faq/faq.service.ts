@@ -1,67 +1,51 @@
 import { Injectable } from '@nestjs/common';
-import { Mutation } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Faq } from 'src/entities/faq.entity';
+import { FaqEntity } from 'src/entities/faq.entity';
 import { Repository } from 'typeorm';
-import { CreateFaqInput, UpdateFaqInput } from './dto/create-faq.input';
-
-interface FindAllOptions {
-     search?: string;
-     group_id?: number;
-}
+import { BaseService } from 'src/common/bases/base.service';
+import { CategoryEntity } from 'src/entities/category.entity';
+import { CreateFaqInput } from './dto/create-faq.input';
+import { BasePaginationInput } from 'src/common/bases/base.input';
 
 @Injectable()
-export class FaqService {
+export class FaqService extends BaseService<FaqEntity> {
      constructor(
-          @InjectRepository(Faq)
-          private readonly faqRepository: Repository<Faq>,
-     ) { }
-
-     async findAll(options: FindAllOptions = {}): Promise<Faq[]> {
-          const qb = this.faqRepository.createQueryBuilder('faq');
-
-          if (options.group_id) {
-               qb.andWhere('faq.group_id = :group_id', { group_id: options.group_id });
-          }
-
-          if (options.search) {
-               const searchTerm = `%${options.search.trim()}%`;
-               qb.andWhere(
-                    '(faq.question ILIKE :search OR faq.answer ILIKE :search)',
-                    { search: searchTerm }
-               );
-          }
-
-          return qb.orderBy('faq.id', 'DESC').getMany();
+          @InjectRepository(FaqEntity)
+          private readonly repo: Repository<FaqEntity>
+     ) {
+          super(repo);
      }
 
-     async create(input: CreateFaqInput): Promise<Faq> {
-          const faq = this.faqRepository.create({
-               question: input.question,
-               answer: input.answer,
-               categories: input.categories,
-               group: input.group_id ? { id: input.group_id } as any : null,
+     public buildQuery(options: BasePaginationInput) {
+          const query = super.buildQuery(options);
+
+          query.leftJoinAndSelect('entity.category', 'category'); // Join từ bảng entity → category
+
+          return query;
+     }
+
+     async createWithCategories(input: CreateFaqInput): Promise<FaqEntity> {
+          const { categoryIds, ...data } = input;
+
+          const faq = this.repo.create(data);
+
+          if (categoryIds?.length) {
+               faq.category = categoryIds.map(id => ({ id } as CategoryEntity));
+          }
+
+          console.log(faq.category);
+
+          const saved = await this.repo.save(faq);
+
+          // LOAD LẠI RELATION
+          const found = await this.repo.findOne({
+               where: { id: saved.id },
+               relations: ['category'],
           });
-
-          return this.faqRepository.save(faq);
-     }
-
-     async update(id: number, input: UpdateFaqInput): Promise<Faq> {
-          const faq = await this.faqRepository.findOneOrFail({
-               where: { id },
-          });
-
-          if (input.question !== undefined) faq.question = input.question;
-          if (input.answer !== undefined) faq.answer = input.answer;
-          if (input.categories !== undefined) faq.categories = input.categories;
-          if (input.group_id !== undefined) {
-               faq.group = input.group_id ? { id: input.group_id } as any : null;
+          if (!found) {
+               throw new Error('FaqEntity not found after save');
           }
-
-          return this.faqRepository.save(faq);
+          return found;
      }
 
-     async delete(id: number): Promise<void> {
-          await this.faqRepository.delete(id);
-     }
 }

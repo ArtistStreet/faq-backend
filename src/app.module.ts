@@ -8,6 +8,7 @@ import { join } from 'path';
 import { FaqModule } from './modules/faq/faq.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RoleModule } from './role/role.module';
+import { CategoryModule } from './modules/category/category.module';
 
 @Module({
      imports: [
@@ -31,6 +32,7 @@ import { RoleModule } from './role/role.module';
           GroupModule,
           FaqModule,
           RoleModule,
+          CategoryModule,
      ],
      controllers: [AppController],
      providers: [AppService],

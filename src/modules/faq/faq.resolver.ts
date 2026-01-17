@@ -1,39 +1,36 @@
 import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
 import { FaqService } from './faq.service';
-import { Faq } from 'src/entities/faq.entity';
+import { FaqEntity } from 'src/entities/faq.entity';
 import { CreateFaqInput, UpdateFaqInput } from './dto/create-faq.input';
+import { FaqModel } from './models/faq.model';
+import { BasePaginationInput } from 'src/common/bases/base.input';
+import { IPaginatedType } from 'src/common/bases/base.model';
 
 @Resolver()
 export class FaqResolver {
      constructor(private readonly faqService: FaqService) { }
 
-     // list ra toan bo group(khong toi uu neu nhieu)
-     @Query(() => [Faq])
-     faqList(
-          @Args('search', { type: () => String, nullable: true }) search?: string,
-          @Args('group_id', { type: () => Int, nullable: true }) group_id?: number,
-     ) {
-          return this.faqService.findAll({ search, group_id });
+     @Query(() => FaqModel)
+     async faqList(@Args('input') body: BasePaginationInput): Promise<IPaginatedType<FaqEntity>> {
+          return this.faqService.search(body);
      }
 
-     @Mutation(() => Faq)
-     async createFaq(@Args('input') input: CreateFaqInput) {
-          return this.faqService.create(input);
+     @Mutation(() => FaqEntity)
+     async createFaq(@Args('input') input: CreateFaqInput): Promise<FaqEntity> {
+          return this.faqService.createWithCategories(input);
      }
 
-     // UPDATE FAQ
-     @Mutation(() => Faq)
+     @Mutation(() => FaqEntity)
      async updateFaq(
           @Args('id', { type: () => Int }) id: number,
           @Args('input') input: UpdateFaqInput,
-     ) {
-          return this.faqService.update(id, input);
+     ): Promise<FaqEntity> {
+          return this.faqService.updateOne(id, input);
      }
 
-     // xoa
      @Mutation(() => Boolean)
      async deleteFaq(@Args('id', { type: () => Int }) id: number) {
-          await this.faqService.delete(id);
+          await this.faqService.softDelete(id);
           return true;
      }
 }

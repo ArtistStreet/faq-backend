@@ -9,14 +9,13 @@ export class CreateFaqInput {
      @Field()
      answer: string;
 
-     @Field(() => [String], { nullable: true })
-     categories: string[];
+     @Field(() => [Int], { nullable: true })
+     categoryIds: number[];
 
-     @Field(() => Int, { nullable: true })
-     group_id?: number;
+     // @Field(() => Int, { nullable: true })
+     // group_id?: number;
 }
 
-// dto/update-faq.input.ts
 @InputType()
 export class UpdateFaqInput {
      @Field({ nullable: true })
@@ -25,9 +24,9 @@ export class UpdateFaqInput {
      @Field({ nullable: true })
      answer?: string;
 
-     @Field(() => [String], { nullable: true })
-     categories?: string[];
+     @Field(() => [Int], { nullable: true })
+     categoryIds?: number[];
 
-     @Field(() => Int, { nullable: true })
-     group_id?: number;
+     // @Field(() => Int, { nullable: true })
+     // group_id?: number;
 }
