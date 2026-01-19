@@ -1,5 +1,5 @@
 // entities/group.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany, JoinTable, JoinColumn, BaseEntity } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany, JoinTable, JoinColumn, BaseEntity, DeleteDateColumn } from 'typeorm';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { FaqEntity } from './faq.entity';
 import { RoleName } from 'src/common/enums/role.enum';
@@ -40,6 +40,9 @@ export class GroupEntity extends BaseEntity {
      @Column({ type: 'smallint' })
      @Field(() => Int)
      role: RoleName;
+
+     @DeleteDateColumn({ name: 'deleted_at' })
+     deletedAt?: Date;
 
      // @Field(() => [FaqEntity], { nullable: true })
      // @OneToMany(() => FaqEntity, (faq) => faq.group, {

@@ -33,8 +33,6 @@ export class FaqService extends BaseService<FaqEntity> {
                faq.category = categoryIds.map(id => ({ id } as CategoryEntity));
           }
 
-          console.log(faq.category);
-
           const saved = await this.repo.save(faq);
 
           // LOAD LẠI RELATION

@@ -1,5 +1,5 @@
 // entities/role.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, BaseEntity } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, BaseEntity, DeleteDateColumn } from 'typeorm';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { FaqEntity } from './faq.entity';
 import { SearchFields } from 'src/common/decorators/entity.decorators';
@@ -22,4 +22,7 @@ export class CategoryEntity extends BaseEntity {
      @Field({ nullable: true })
      @Column({ nullable: true })
      description?: string;
+
+     @DeleteDateColumn({ name: 'deleted_at' })
+     deletedAt?: Date;
 }
