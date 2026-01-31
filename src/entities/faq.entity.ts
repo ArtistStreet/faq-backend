@@ -1,18 +1,16 @@
 // entities/faq.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, BaseEntity, ManyToMany, JoinTable, DeleteDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, DeleteDateColumn } from 'typeorm';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { GroupEntity } from './group.entity';
 import { SearchFields } from 'src/common/decorators/entity.decorators';
 import { CategoryEntity } from './category.entity';
+import { BaseEntity } from 'src/common/bases/base.entity';
+
 
 @ObjectType() // cho GraphQL
 @Entity('faqs') // tên bảng trong DB
 @SearchFields(['question', 'answer'])
 export class FaqEntity extends BaseEntity {
-     @Field(() => Int)
-     @PrimaryGeneratedColumn()
-     id: number;
-
      @Field()
      @Column()
      question: string;
@@ -38,9 +36,6 @@ export class FaqEntity extends BaseEntity {
      // faq_id(FK → faq.id)
      // category_id(FK → category.id)
      category: CategoryEntity[]; // khong phai cot trong db
-
-     @DeleteDateColumn({ name: 'deleted_at' })
-     deletedAt?: Date;
 
      // Quan hệ với GroupEntity
      // @Field(() => GroupEntity, { nullable: true })

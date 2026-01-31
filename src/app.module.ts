@@ -9,6 +9,7 @@ import { FaqModule } from './modules/faq/faq.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RoleModule } from './role/role.module';
 import { CategoryModule } from './modules/category/category.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
      imports: [
@@ -33,6 +34,7 @@ import { CategoryModule } from './modules/category/category.module';
           FaqModule,
           RoleModule,
           CategoryModule,
+          AuthModule,
      ],
      controllers: [AppController],
      providers: [AppService],

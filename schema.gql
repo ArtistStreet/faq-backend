@@ -26,8 +26,31 @@ type CategoryEntity {
   description: String
 }
 
+type UserEntity {
+  id: Float!
+  created_by: Float
+  updated_by: Float
+  created_at: DateTime!
+  updated_at: String
+  createdByUser: UserEntity!
+  updatedByUser: UserEntity
+  email: String!
+  role: Float!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type FaqEntity {
-  id: Int!
+  id: Float!
+  created_by: Float
+  updated_by: Float
+  created_at: DateTime!
+  updated_at: String
+  createdByUser: UserEntity!
+  updatedByUser: UserEntity
   question: String!
   answer: String!
   category: [CategoryEntity!]
@@ -51,6 +74,11 @@ type CategoryModel {
   totalPages: Int!
   currentPage: Int!
   data: [CategoryEntity!]!
+}
+
+type LoginResponse {
+  accessToken: String!
+  user: UserEntity!
 }
 
 type Query {
@@ -122,6 +150,8 @@ type Mutation {
   createCategory(input: CreateCategoryInput!): CategoryEntity!
   updateCategory(id: Int!, input: UpdateCategoryInput!): CategoryEntity!
   deleteCategory(id: Int!): Boolean!
+  register(input: LoginInput!): UserEntity!
+  login(input: LoginInput!): LoginResponse!
 }
 
 input CreateGroupInput {
@@ -165,4 +195,9 @@ input CreateCategoryInput {
 input UpdateCategoryInput {
   name: String
   description: String
+}
+
+input LoginInput {
+  email: String!
+  password: String!
 }

@@ -4,3 +4,8 @@ export enum RoleName {
      OFFICER = 2,
      PRESIDENT = 3,
 }
+
+export enum Role {
+     ADMIN = 1,
+     USER = 2,
+}
