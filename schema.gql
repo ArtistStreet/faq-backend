@@ -152,6 +152,8 @@ type Mutation {
   deleteCategory(id: Int!): Boolean!
   register(input: LoginInput!): UserEntity!
   login(input: LoginInput!): LoginResponse!
+  forgotPassword(email: String!): Boolean!
+  resetPassword(token: String!, newPassword: String!): Boolean!
 }
 
 input CreateGroupInput {

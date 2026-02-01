@@ -13,7 +13,7 @@ import { AuthResolver } from './auth.resolver';
           TypeOrmModule.forFeature([UserEntity]),
           JwtModule.register({
                secret: process.env.JWT_SECRET || 'secret_key',
-               signOptions: { expiresIn: '1d' }
+               signOptions: { expiresIn: '30d' }
           })
      ],
      providers: [AuthService, JwtStrategy, AuthResolver],

@@ -22,4 +22,10 @@ export class UserEntity extends BaseEntity {
      @Field()
      @Column({ default: 1 })
      role: number;
+
+     @Column({ type: 'varchar', nullable: true })
+     resetPasswordToken?: string | null;
+
+     @Column({ type: 'timestamp', nullable: true })
+     resetPasswordExpires?: Date | null;
 }
