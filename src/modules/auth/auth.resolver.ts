@@ -1,8 +1,9 @@
-import { Args, Resolver, Mutation } from '@nestjs/graphql';
+import { Args, Resolver, Mutation, Int } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { LoginResponse } from 'src/modules/auth/dto/login-respone';
 import { LoginInput } from 'src/modules/auth/dto/login-input';
 import { UserEntity } from 'src/entities/user.entity';
+import { AuthUser } from './auth.decorator';
 
 @Resolver()
 export class AuthResolver {
@@ -28,5 +29,11 @@ export class AuthResolver {
           @Args('token') token: string,
           @Args('newPassword') newPassword: string) {
           return this.authService.resetPassword(token, newPassword);
+     }
+
+     @Mutation(() => Boolean)
+     async deleteUser(@Args('id', { type: () => Int }) id: number, @AuthUser() auth: UserEntity) {
+          await this.authService.softDelete(id, auth.id);
+          return true;
      }
 }

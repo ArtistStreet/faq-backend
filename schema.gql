@@ -20,12 +20,6 @@ type GroupModel {
   data: [GroupEntity!]!
 }
 
-type CategoryEntity {
-  id: Int!
-  name: String!
-  description: String
-}
-
 type UserEntity {
   id: Float!
   created_by: Float
@@ -34,14 +28,23 @@ type UserEntity {
   updated_at: String
   createdByUser: UserEntity!
   updatedByUser: UserEntity
+  name: String!
   email: String!
   role: Float!
+  address: String!
+  phone_number: String!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type CategoryEntity {
+  id: Int!
+  name: String!
+  description: String
+}
 
 type FaqEntity {
   id: Float!
@@ -154,6 +157,7 @@ type Mutation {
   login(input: LoginInput!): LoginResponse!
   forgotPassword(email: String!): Boolean!
   resetPassword(token: String!, newPassword: String!): Boolean!
+  deleteUser(id: Int!): Boolean!
 }
 
 input CreateGroupInput {
@@ -200,6 +204,7 @@ input UpdateCategoryInput {
 }
 
 input LoginInput {
+  name: String!
   email: String!
   password: String!
 }

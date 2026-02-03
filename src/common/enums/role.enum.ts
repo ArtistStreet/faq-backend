@@ -8,4 +8,5 @@ export enum RoleName {
 export enum Role {
      ADMIN = 1,
      USER = 2,
+     SELLER = 3,
 }

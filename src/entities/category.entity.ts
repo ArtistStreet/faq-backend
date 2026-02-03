@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, BaseEntity, DeleteD
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { FaqEntity } from './faq.entity';
 import { SearchFields } from 'src/common/decorators/entity.decorators';
+import { ProductEntity } from './product.entity';
 
 @ObjectType()
 @Entity()
@@ -18,6 +19,9 @@ export class CategoryEntity extends BaseEntity {
 
      @ManyToMany(() => FaqEntity, faq => faq.category)
      faq?: FaqEntity[]; // k phai cot trong db
+
+     @ManyToMany(() => ProductEntity, faq => faq.category)
+     product?: ProductEntity[]; // k phai cot trong db
 
      @Field({ nullable: true })
      @Column({ nullable: true })

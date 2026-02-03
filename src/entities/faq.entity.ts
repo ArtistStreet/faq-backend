@@ -36,16 +36,4 @@ export class FaqEntity extends BaseEntity {
      // faq_id(FK → faq.id)
      // category_id(FK → category.id)
      category: CategoryEntity[]; // khong phai cot trong db
-
-     // Quan hệ với GroupEntity
-     // @Field(() => GroupEntity, { nullable: true })
-     // @ManyToOne(() => GroupEntity, (group) => group.faqs, { nullable: true, onDelete: 'SET NULL' })
-     // @JoinColumn({ name: 'group_id' })
-     // group?: GroupEntity;
-
-     // // Cột group_id trong DB (không cần @Field vì đã có group)
-     // @Field()
-     // @Column({ name: 'group_id', nullable: true })
-     // group_id?: number;
-
 }

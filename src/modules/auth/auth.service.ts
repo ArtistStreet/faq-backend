@@ -7,14 +7,17 @@ import * as bcrypt from 'bcrypt';
 import { LoginResponse } from 'src/modules/auth/dto/login-respone';
 import { LoginInput } from 'src/modules/auth/dto/login-input';
 import { randomUUID } from 'crypto';
+import { BaseService } from 'src/common/bases/base.service';
 
 @Injectable()
-export class AuthService {
+export class AuthService extends BaseService<UserEntity> {
      constructor(
           private jwtService: JwtService,
           @InjectRepository(UserEntity)
           private userRepo: Repository<UserEntity>,
-     ) { }
+     ) {
+          super(userRepo);
+     }
 
      async register(input: LoginInput): Promise<UserEntity> {
           const { email, password } = input;
@@ -75,7 +78,21 @@ export class AuthService {
      }
 
      async resetPassword(token: string, newPassword: string): Promise<boolean> {
-          const uesr = await this.userRepo.findOne({ where: { resetPasswordToken: token } })
+          const user = await this.userRepo.findOne({ where: { resetPasswordToken: token } })
+          if (!user) {
+               throw new UnauthorizedException('Invalid token');
+          }
+
+          if (!user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+               throw new UnauthorizedException('Token expires');
+          }
+
+          user.password = await bcrypt.hash(newPassword, 10);
+
+          await this.userRepo.save(user);
+
+          user.resetPasswordExpires = null;
+          user.resetPasswordToken = null;
 
           return true;
      }
