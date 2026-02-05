@@ -1,12 +1,13 @@
 // entities/faq.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToMany, JoinTable, DeleteDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { GroupEntity } from './group.entity';
 import { SearchFields } from 'src/common/decorators/entity.decorators';
 import { CategoryEntity } from './category.entity';
 import { BaseEntity } from 'src/common/bases/base.entity';
-import { Decimal128 } from 'typeorm/browser';
 import { UserEntity } from './user.entity';
+import { Status } from 'src/common/enums/unit.enum';
+import { ShopEntity } from './shop.entity';
+import { CartItemEntity } from './cart_item.entity';
 
 
 @ObjectType() // cho GraphQL
@@ -29,10 +30,6 @@ export class ProductEntity extends BaseEntity {
      @Column()
      stock: number;
 
-     // @Field()
-     // @Column()
-     // seller_id: number;
-
      @ManyToOne(() => UserEntity, { eager: false })
      @JoinColumn({ name: 'seller_id' })
      seller: UserEntity;
@@ -54,4 +51,15 @@ export class ProductEntity extends BaseEntity {
      // faq_id(FK → faq.id)
      // category_id(FK → category.id)
      category: CategoryEntity[]; // khong phai cot trong db
+
+     @Field()
+     @Column()
+     status: Status;
+
+     @ManyToOne(() => ShopEntity, { eager: false })
+     @JoinColumn({ name: 'shop_id' })
+     shop: ShopEntity;
+
+     // @OneToMany(() => CartItemEntity, cart => cart.product)
+     // cart: CartItemEntity[];
 }

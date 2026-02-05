@@ -1,5 +1,5 @@
 // entities/faq.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, DeleteDateColumn, ManyToOne, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { GroupEntity } from './group.entity';
 import { SearchFields } from 'src/common/decorators/entity.decorators';
@@ -8,6 +8,8 @@ import { BaseEntity } from 'src/common/bases/base.entity';
 import { Decimal128 } from 'typeorm/browser';
 import { UserEntity } from './user.entity';
 import { OrderStatus, PaymentMethod } from 'src/common/enums/unit.enum';
+import { OrderItemEntity } from './order_item.entity';
+import { ShippingEntity } from './shipping.entity';
 
 
 @ObjectType() // cho GraphQL
@@ -48,4 +50,10 @@ export class OrderEntity extends BaseEntity {
      @ManyToOne(() => UserEntity, { eager: false })
      @JoinColumn({ name: 'buyer_id' })
      buyer: UserEntity;
+
+     @OneToMany(() => OrderItemEntity, orderItem => orderItem.order)
+     order_item: OrderItemEntity[];
+
+     @OneToOne(() => ShippingEntity, shipping => shipping.order)
+     shipping: ShippingEntity;
 }

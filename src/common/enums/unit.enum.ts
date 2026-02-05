@@ -17,3 +17,8 @@ export enum OrderStatus {
      CANCELLED = 6,
      REFUNDED = 7,
 }
+
+export enum Status {
+     IN_STOCK = 1,
+     OUT_OF_STOCK = 2,
+}
