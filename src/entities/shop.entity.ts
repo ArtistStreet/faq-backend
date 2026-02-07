@@ -30,7 +30,7 @@ export class ShopEntity extends BaseEntity {
 
      @Field()
      @Column()
-     rating: string;
+     rating?: string;
 
      @OneToOne(() => UserEntity, { eager: false })
      @JoinColumn({ name: 'owner_id' })

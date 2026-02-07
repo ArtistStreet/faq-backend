@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RoleModule } from './role/role.module';
 import { CategoryModule } from './modules/category/category.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { ShopModule } from './modules/shop/shop.module';
 
 @Module({
      imports: [
@@ -35,6 +36,7 @@ import { AuthModule } from './modules/auth/auth.module';
           RoleModule,
           CategoryModule,
           AuthModule,
+          ShopModule,
      ],
      controllers: [AppController],
      providers: [AppService],

@@ -1,6 +1,7 @@
 // dto/create-faq.input.ts
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { FaqEntity } from 'src/entities/faq.entity';
+import { ProductEntity } from 'src/entities/product.entity';
 
 @InputType()
 export class CreateCategoryInput {
@@ -9,6 +10,9 @@ export class CreateCategoryInput {
 
      @Field({ nullable: true })
      description?: string;
+
+     @Field({ nullable: true })
+     product?: ProductEntity[];
 }
 
 // dto/update-faq.input.ts
@@ -19,4 +23,7 @@ export class UpdateCategoryInput {
 
      @Field({ nullable: true })
      description?: string;
+
+     @Field({ nullable: true })
+     product?: ProductEntity[];
 }
