@@ -20,6 +20,25 @@ type GroupModel {
   data: [GroupEntity!]!
 }
 
+type ShopEntity {
+  id: Float!
+  created_by: Float
+  updated_by: Float
+  created_at: DateTime!
+  updated_at: String
+  createdByUser: UserEntity!
+  updatedByUser: UserEntity
+  desc: String
+  name: String!
+  address: String!
+  rating: Float
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type UserEntity {
   id: Float!
   created_by: Float
@@ -28,17 +47,35 @@ type UserEntity {
   updated_at: String
   createdByUser: UserEntity!
   updatedByUser: UserEntity
-  name: String!
+  name: String
   email: String!
-  role: Float!
-  address: String!
-  phone_number: String!
+  role: Role!
+  address: String
+  phone_number: String
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
+"""User roles"""
+enum Role {
+  ADMIN
+  USER
+  SELLER
+}
+
+type ProductEntity {
+  id: Float!
+  created_by: Float
+  updated_by: Float
+  created_at: DateTime!
+  updated_at: String
+  createdByUser: UserEntity!
+  updatedByUser: UserEntity
+  name: String!
+  desc: String!
+  price: Float!
+  stock: Float!
+  category: [CategoryEntity!]
+  status: Float!
+}
 
 type CategoryEntity {
   id: Int!
@@ -84,12 +121,28 @@ type LoginResponse {
   user: UserEntity!
 }
 
+type UserModel {
+  totalCount: Int!
+  totalPages: Int!
+  currentPage: Int!
+  data: [UserEntity!]!
+}
+
+type ProductModel {
+  totalCount: Int!
+  totalPages: Int!
+  currentPage: Int!
+  data: [ProductEntity!]!
+}
+
 type Query {
   rootGroups(input: BasePaginationInput!): GroupModel!
   groupChildren(id: Int!, input: BasePaginationInput!): GroupModel!
   faqList(input: BasePaginationInput!): FaqModel!
   roleList: [RoleEntity!]!
   categoryList(input: BasePaginationInput!): CategoryModel!
+  listUser(input: BasePaginationInput!): UserModel!
+  listProduct(input: BasePaginationInput!): ProductModel!
 }
 
 input BasePaginationInput {
@@ -151,13 +204,19 @@ type Mutation {
   createRole(name: String!): RoleEntity!
   deleteRole(id: Int!): Boolean!
   createCategory(input: CreateCategoryInput!): CategoryEntity!
-  updateCategory(id: Int!, input: UpdateCategoryInput!): CategoryEntity!
+  updateCategory(id: Int!, input: CreateCategoryInput!): CategoryEntity!
   deleteCategory(id: Int!): Boolean!
   register(input: LoginInput!): UserEntity!
   login(input: LoginInput!): LoginResponse!
   forgotPassword(email: String!): Boolean!
   resetPassword(token: String!, newPassword: String!): Boolean!
   deleteUser(id: Int!): Boolean!
+  createShop(input: CreateShopInput!): ShopEntity!
+  updateShop(id: Int!, input: CreateShopInput!): ShopEntity!
+  deleteShop(id: Int!): Boolean!
+  createProduct(input: CreateProductInput!): ProductEntity!
+  updateProduct(id: Int!, input: CreateProductInput!): ProductEntity!
+  deleteProduct(id: Int!): Boolean!
 }
 
 input CreateGroupInput {
@@ -196,15 +255,32 @@ input UpdateFaqInput {
 input CreateCategoryInput {
   name: String!
   description: String
-}
-
-input UpdateCategoryInput {
-  name: String
-  description: String
+  productIds: [Float!]
 }
 
 input LoginInput {
   name: String!
   email: String!
   password: String!
+}
+
+input CreateShopInput {
+  name: String!
+  desc: String
+  address: String!
+}
+
+input CreateProductInput {
+  name: String!
+  desc: String
+  price: Float!
+  stock: Float!
+  categoryIds: [Int!]!
+  images: [String!]!
+  status: ProductStatus!
+}
+
+enum ProductStatus {
+  IN_STOCK
+  OUT_OF_STOCK
 }

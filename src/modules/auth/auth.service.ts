@@ -20,7 +20,7 @@ export class AuthService extends BaseService<UserEntity> {
      }
 
      async register(input: LoginInput): Promise<UserEntity> {
-          const { email, password } = input;
+          const { email, password, name } = input;
 
           const exist = await this.userRepo.findOne({ where: { email } });
           if (exist) {
@@ -30,6 +30,7 @@ export class AuthService extends BaseService<UserEntity> {
           const hashedPass = await bcrypt.hash(password, 10);
 
           const user = this.userRepo.create({
+               name,
                email,
                password: hashedPass,
                role: 1,
@@ -51,6 +52,7 @@ export class AuthService extends BaseService<UserEntity> {
 
           const payload = {
                sub: user.id,
+               name: user.name,
                email: user.email,
                role: user.role,
           };

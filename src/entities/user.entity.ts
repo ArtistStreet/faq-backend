@@ -1,6 +1,5 @@
-// entities/role.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, DeleteDateColumn, OneToMany, OneToOne } from 'typeorm';
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
 import { SearchFields } from 'src/common/decorators/entity.decorators';
 import { BaseEntity } from 'src/common/bases/base.entity';
 import { ProductEntity } from './product.entity';
@@ -10,11 +9,16 @@ import { Role } from 'src/common/enums/role.enum';
 import { CartEntity } from './cart.entity';
 import { AddressEntity } from './address.entity';
 
+registerEnumType(Role, {
+     name: 'Role',
+     description: 'User roles'
+});
+
 @ObjectType()
 @Entity()
 @SearchFields(['name'])
 export class UserEntity extends BaseEntity {
-     @Field()
+     @Field({ nullable: true })
      @Column({ nullable: true })
      name: string;
 
@@ -25,15 +29,19 @@ export class UserEntity extends BaseEntity {
      @Column()
      password: string;
 
-     @Field()
-     @Column({ default: 1 })
+     @Field(() => Role)
+     @Column({
+          type: 'enum',
+          enum: Role,
+          default: Role.USER
+     })
      role: Role;
 
-     @Field()
+     @Field({ nullable: true })
      @Column({ nullable: true })
      address: string;
 
-     @Field()
+     @Field({ nullable: true })
      @Column({ unique: true, nullable: true })
      phone_number: string;
 

@@ -18,7 +18,7 @@ export enum OrderStatus {
      REFUNDED = 7,
 }
 
-export enum Status {
+export enum ProductStatus {
      IN_STOCK = 1,
      OUT_OF_STOCK = 2,
 }

@@ -5,10 +5,9 @@ import { SearchFields } from 'src/common/decorators/entity.decorators';
 import { CategoryEntity } from './category.entity';
 import { BaseEntity } from 'src/common/bases/base.entity';
 import { UserEntity } from './user.entity';
-import { Status } from 'src/common/enums/unit.enum';
+import { ProductStatus } from 'src/common/enums/unit.enum';
 import { ShopEntity } from './shop.entity';
 import { CartItemEntity } from './cart_item.entity';
-
 
 @ObjectType() // cho GraphQL
 @Entity('product') // tên bảng trong DB
@@ -20,11 +19,11 @@ export class ProductEntity extends BaseEntity {
 
      @Field()
      @Column('text')
-     desc: string;
+     desc?: string;
 
      @Field()
      @Column('decimal', { precision: 10, scale: 2 })
-     price: string;
+     price: number;
 
      @Field()
      @Column()
@@ -54,7 +53,7 @@ export class ProductEntity extends BaseEntity {
 
      @Field()
      @Column()
-     status: Status;
+     status: ProductStatus;
 
      @ManyToOne(() => ShopEntity, { eager: false })
      @JoinColumn({ name: 'shop_id' })

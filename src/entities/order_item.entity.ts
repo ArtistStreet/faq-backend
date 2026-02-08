@@ -7,7 +7,7 @@ import { CategoryEntity } from './category.entity';
 import { BaseEntity } from 'src/common/bases/base.entity';
 import { Decimal128 } from 'typeorm/browser';
 import { UserEntity } from './user.entity';
-import { OrderStatus, PaymentMethod, Status } from 'src/common/enums/unit.enum';
+import { OrderStatus, PaymentMethod, ProductStatus } from 'src/common/enums/unit.enum';
 import { OrderEntity } from './order.entity';
 
 
@@ -32,7 +32,7 @@ export class OrderItemEntity extends BaseEntity {
 
      @Field()
      @Column()
-     status: Status;
+     status: ProductStatus;
 
      @ManyToOne(() => OrderEntity, { eager: false })
      @JoinColumn({ name: 'order_id' })
