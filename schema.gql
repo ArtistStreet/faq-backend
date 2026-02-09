@@ -206,7 +206,7 @@ type Mutation {
   createCategory(input: CreateCategoryInput!): CategoryEntity!
   updateCategory(id: Int!, input: CreateCategoryInput!): CategoryEntity!
   deleteCategory(id: Int!): Boolean!
-  register(input: LoginInput!): UserEntity!
+  register(input: RegisterInput!): UserEntity!
   login(input: LoginInput!): LoginResponse!
   forgotPassword(email: String!): Boolean!
   resetPassword(token: String!, newPassword: String!): Boolean!
@@ -258,8 +258,13 @@ input CreateCategoryInput {
   productIds: [Float!]
 }
 
-input LoginInput {
+input RegisterInput {
   name: String!
+  email: String!
+  password: String!
+}
+
+input LoginInput {
   email: String!
   password: String!
 }

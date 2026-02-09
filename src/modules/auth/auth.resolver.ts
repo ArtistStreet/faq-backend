@@ -1,7 +1,7 @@
 import { Args, Resolver, Mutation, Int, Query } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { LoginResponse } from 'src/modules/auth/dto/login-respone';
-import { LoginInput } from 'src/modules/auth/dto/login-input';
+import { LoginInput, RegisterInput } from 'src/modules/auth/dto/login-input';
 import { UserEntity } from 'src/entities/user.entity';
 import { AuthUser } from './auth.decorator';
 import { BasePaginationInput } from 'src/common/bases/base.input';
@@ -11,7 +11,7 @@ import { GqlJwtAuthGuard } from './guards/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
 
 @Resolver()
-@UseGuards(GqlJwtAuthGuard)
+// @UseGuards(GqlJwtAuthGuard)
 export class AuthResolver {
      constructor(private readonly authService: AuthService) { }
 
@@ -21,7 +21,7 @@ export class AuthResolver {
      }
 
      @Mutation(() => UserEntity)
-     async register(@Args('input') input: LoginInput): Promise<UserEntity> {
+     async register(@Args('input') input: RegisterInput): Promise<UserEntity> {
           return this.authService.register(input);
      }
 

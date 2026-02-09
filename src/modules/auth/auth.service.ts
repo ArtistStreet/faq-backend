@@ -5,7 +5,7 @@ import { UserEntity } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { LoginResponse } from 'src/modules/auth/dto/login-respone';
-import { LoginInput } from 'src/modules/auth/dto/login-input';
+import { LoginInput, RegisterInput } from 'src/modules/auth/dto/login-input';
 import { randomUUID } from 'crypto';
 import { BaseService } from 'src/common/bases/base.service';
 
@@ -19,7 +19,7 @@ export class AuthService extends BaseService<UserEntity> {
           super(userRepo);
      }
 
-     async register(input: LoginInput): Promise<UserEntity> {
+     async register(input: RegisterInput): Promise<UserEntity> {
           const { email, password, name } = input;
 
           const exist = await this.userRepo.findOne({ where: { email } });
