@@ -98,4 +98,11 @@ export class AuthService extends BaseService<UserEntity> {
 
           return true;
      }
+
+     findById(id: number) {
+          return this.userRepo.findOne({
+               where: { id },
+               relations: ['shop'], // cực kỳ quan trọng
+          });
+     }
 }

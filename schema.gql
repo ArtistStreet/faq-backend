@@ -50,8 +50,8 @@ type UserEntity {
   name: String
   email: String!
   role: Role!
-  address: String
   phone_number: String
+  shop: ShopEntity
 }
 
 """User roles"""
@@ -141,6 +141,7 @@ type Query {
   faqList(input: BasePaginationInput!): FaqModel!
   roleList: [RoleEntity!]!
   categoryList(input: BasePaginationInput!): CategoryModel!
+  me: UserEntity!
   listUser(input: BasePaginationInput!): UserModel!
   listProduct(input: BasePaginationInput!): ProductModel!
 }

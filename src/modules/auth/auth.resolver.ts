@@ -9,11 +9,17 @@ import { UserModel } from './models/auth.model';
 import { IPaginatedType } from 'src/common/bases/base.model';
 import { GqlJwtAuthGuard } from './guards/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
+import { CurrentUser } from './decorators/current-user.decorator';
 
 @Resolver()
-// @UseGuards(GqlJwtAuthGuard)
 export class AuthResolver {
      constructor(private readonly authService: AuthService) { }
+
+     @Query(() => UserEntity)
+     @UseGuards(GqlJwtAuthGuard)
+     me(@CurrentUser() user: UserEntity) {
+          return this.authService.findById(user.id);
+     }
 
      @Query(() => UserModel)
      async listUser(@Args('input') body: BasePaginationInput): Promise<IPaginatedType<UserEntity>> {

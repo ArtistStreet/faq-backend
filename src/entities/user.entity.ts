@@ -38,10 +38,6 @@ export class UserEntity extends BaseEntity {
      role: Role;
 
      @Field({ nullable: true })
-     @Column({ nullable: true })
-     address: string;
-
-     @Field({ nullable: true })
      @Column({ unique: true, nullable: true })
      phone_number: string;
 
@@ -57,6 +53,7 @@ export class UserEntity extends BaseEntity {
      @OneToMany(() => OrderEntity, order => order.buyer)
      order?: OrderEntity[];
 
+     @Field(() => ShopEntity, { nullable: true })
      @OneToOne(() => ShopEntity, shop => shop.owner)
      shop?: ShopEntity;
 
