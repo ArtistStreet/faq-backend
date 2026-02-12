@@ -24,9 +24,9 @@ export class CreateProductInput {
      @Field(() => [Int])
      categoryIds: number[];
 
-     @Field(() => [String])
-     images: string[];
+     // @Field(() => [String])
+     // images: string[];
 
-     @Field(() => ProductStatus)
+     @Field(() => ProductStatus, { nullable: true })
      status: ProductStatus;
 }

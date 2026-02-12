@@ -4,7 +4,7 @@ import { ShopEntity } from 'src/entities/shop.entity';
 import { CreateShopInput } from './dto/create-shop.input';
 import { UserEntity } from 'src/entities/user.entity';
 import { AuthUser } from '../auth/auth.decorator';
-import { UseGuards } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { GqlJwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Resolver()
@@ -14,7 +14,11 @@ export class ShopResolver {
 
      @Mutation(() => ShopEntity)
      async createShop(@Args('input') input: CreateShopInput, @AuthUser() auth: UserEntity): Promise<ShopEntity> {
-          return this.shopService.create({ ...input, created_by: auth.id });
+          const exist = await this.shopService.findOne({ where: { owner: { id: auth.id } } });
+          if (exist) {
+               throw new BadRequestException('User already has a shop!!!');
+          }
+          return this.shopService.create({ ...input, owner: { id: auth.id }, created_by: auth.id });
      }
 
      @Mutation(() => ShopEntity)

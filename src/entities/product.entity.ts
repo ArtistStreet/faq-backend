@@ -51,8 +51,8 @@ export class ProductEntity extends BaseEntity {
      // category_id(FK → category.id)
      category: CategoryEntity[]; // khong phai cot trong db
 
-     @Field()
-     @Column()
+     @Field({ nullable: true })
+     @Column({ nullable: true })
      status: ProductStatus;
 
      @ManyToOne(() => ShopEntity, { eager: false })

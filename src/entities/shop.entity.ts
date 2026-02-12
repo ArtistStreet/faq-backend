@@ -27,7 +27,7 @@ export class ShopEntity extends BaseEntity {
      @Column({ nullable: true })
      rating?: number;
 
-     @OneToOne(() => UserEntity, { eager: false })
+     @OneToOne(() => UserEntity, user => user.shop, { eager: false })
      @JoinColumn({ name: 'owner_id' })
      owner: UserEntity;
 

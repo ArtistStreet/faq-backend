@@ -7,8 +7,12 @@ import { IPaginatedType } from 'src/common/bases/base.model';
 import { CreateProductInput } from './dto/create-product.input';
 import { UserEntity } from 'src/entities/user.entity';
 import { AuthUser } from '../auth/auth.decorator';
+import { ShopEntity } from 'src/entities/shop.entity';
+import { UseGuards } from '@nestjs/common';
+import { GqlJwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Resolver()
+@UseGuards(GqlJwtAuthGuard)
 export class ProductResolver {
      constructor(private readonly productService: ProductService) { }
 
@@ -18,7 +22,7 @@ export class ProductResolver {
      }
 
      @Mutation(() => ProductEntity)
-     async createProduct(@Args('input') input: CreateProductInput, @AuthUser() auth: UserEntity): Promise<ProductEntity> {
+     async createProduct(@Args('input') input: CreateProductInput, @AuthUser() auth: UserEntity, shop: ShopEntity): Promise<ProductEntity> {
           return this.productService.create({ ...input, created_by: auth.id });
      }
 
