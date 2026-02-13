@@ -7,7 +7,6 @@ import { IPaginatedType } from 'src/common/bases/base.model';
 import { CreateProductInput } from './dto/create-product.input';
 import { UserEntity } from 'src/entities/user.entity';
 import { AuthUser } from '../auth/auth.decorator';
-import { ShopEntity } from 'src/entities/shop.entity';
 import { UseGuards } from '@nestjs/common';
 import { GqlJwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -18,12 +17,12 @@ export class ProductResolver {
 
      @Query(() => ProductModel)
      async listProduct(@Args('input') body: BasePaginationInput): Promise<IPaginatedType<ProductEntity>> {
-          return this.productService.search(body);
+          return this.productService.search(body, ['category']);
      }
 
      @Mutation(() => ProductEntity)
-     async createProduct(@Args('input') input: CreateProductInput, @AuthUser() auth: UserEntity, shop: ShopEntity): Promise<ProductEntity> {
-          return this.productService.create({ ...input, created_by: auth.id });
+     async createProduct(@Args('input') input: CreateProductInput, @AuthUser() auth: UserEntity): Promise<ProductEntity> {
+          return this.productService.createProduct({ ...input });
      }
 
      @Mutation(() => ProductEntity)
@@ -32,7 +31,11 @@ export class ProductResolver {
           @Args('input') input: CreateProductInput,
           @AuthUser() auth: UserEntity
      ): Promise<ProductEntity> {
-          return this.productService.updateOne(id, { ...input, updated_by: auth.id });
+          return this.productService.updateOneWithRelation(
+               id,
+               input,
+               auth
+          );
      }
 
      @Mutation(() => Boolean)

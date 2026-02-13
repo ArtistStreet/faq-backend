@@ -38,7 +38,7 @@ export class BaseService<T extends { id: number }> {
           }
      }
 
-     async updateOne(id: number | FindOneOptions<T>, data: QueryDeepPartialEntity<T>): Promise<T> {
+     async updateOne(id: number | FindOneOptions<T>, data: QueryDeepPartialEntity<T>, relationsHandler?: (entity: T) => Promise<void>,): Promise<T> {
           const item = await this.findOne(id);
           if (!item) {
                throw new NotFoundException();
@@ -47,6 +47,10 @@ export class BaseService<T extends { id: number }> {
                Object.entries(data).filter(([_, value]) => value !== undefined)
           ) as QueryDeepPartialEntity<T>;
           Object.assign(item, cleanedData);
+
+          if (relationsHandler) {
+               await relationsHandler(item);
+          }
           return this.repository.save(item);
      }
 
@@ -106,8 +110,12 @@ export class BaseService<T extends { id: number }> {
           return this.repository.existsBy(criteria);
      }
 
-     async search(options: BasePaginationInput): Promise<IPaginatedType<T>> {
+     async search(options: BasePaginationInput, relations: string[] = [],): Promise<IPaginatedType<T>> {
           const query = this.buildQuery(options);
+
+          relations.forEach((relation) => {
+               query.leftJoinAndSelect(`entity.${relation}`, relation);
+          });
 
           const totalCount = await query.getCount();
 
@@ -179,21 +187,24 @@ export class BaseService<T extends { id: number }> {
           // Kiểm tra nếu field là relation (có dấu chấm)
           let fieldPath = `entity.${field}`;
           if (field.includes('.')) {
-               const parts = field.split('.');
-               const column = parts.pop(); // Lấy tên cột cuối cùng
-               // Tạo các JOIN cho từng cấp relation
-               let currentAlias = 'entity';
-               for (let i = 0; i < parts.length; i++) {
-                    const relationName = parts[i];
-                    const aliasName = parts.slice(0, i + 1).join('_'); // user_profile, user_profile_company
-                    // Kiểm tra nếu JOIN chưa tồn tại
-                    if (!query.expressionMap.joinAttributes.some((j) => j.alias.name === aliasName)) {
-                         query.leftJoin(`${currentAlias}.${relationName}`, aliasName);
-                    }
-                    currentAlias = aliasName;
-               }
-               fieldPath = `${currentAlias}.${column}`;
+               fieldPath = field; // dùng trực tiếp alias đã join
           }
+          // if (field.includes('.')) {
+          //      const parts = field.split('.');
+          //      const column = parts.pop(); // Lấy tên cột cuối cùng
+          //      // Tạo các JOIN cho từng cấp relation
+          //      let currentAlias = 'entity';
+          //      for (let i = 0; i < parts.length; i++) {
+          //           const relationName = parts[i];
+          //           const aliasName = parts.slice(0, i + 1).join('_'); // user_profile, user_profile_company
+          //           // Kiểm tra nếu JOIN chưa tồn tại
+          //           if (!query.expressionMap.joinAttributes.some((j) => j.alias.name === aliasName)) {
+          //                query.leftJoin(`${currentAlias}.${relationName}`, aliasName);
+          //           }
+          //           currentAlias = aliasName;
+          //      }
+          //      fieldPath = `${currentAlias}.${column}`;
+          // }
           // Xử lý trường hợp kiểm tra NULL
           if (value.toLowerCase() === 'null') {
                if (operator === '=') {
