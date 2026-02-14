@@ -123,31 +123,31 @@ export class GroupService extends BaseService<GroupEntity> {
           super(repo);
      }
 
-     async search(options: BasePaginationInput): Promise<IPaginatedType<GroupEntity>> {
-          const query = this.buildQuery(options);
+     // async search(options: BasePaginationInput): Promise<IPaginatedType<GroupEntity>> {
+     //      const query = this.buildQuery(options);
 
-          const totalCount = await query.getCount();
+     //      const totalCount = await query.getCount();
 
-          const limit = options.limit ?? appConf.PAGE_DEFAULT;
-          const page = options.page ?? 1;
-          const skip = (page - 1) * limit;
+     //      const limit = options.limit ?? appConf.PAGE_DEFAULT;
+     //      const page = options.page ?? 1;
+     //      const skip = (page - 1) * limit;
 
-          const { entities, raw } = await query
-               .skip(skip)
-               .take(limit)
-               .getRawAndEntities();
+     //      const { entities, raw } = await query
+     //           .skip(skip)
+     //           .take(limit)
+     //           .getRawAndEntities();
 
-          entities.forEach((item, index) => {
-               item.hasChildren = raw[index].hasChildren;
-          });
+     //      entities.forEach((item, index) => {
+     //           item.hasChildren = raw[index].hasChildren;
+     //      });
 
-          return {
-               totalCount,
-               totalPages: Math.ceil(totalCount / limit),
-               currentPage: page,
-               data: entities,
-          };
-     }
+     //      return {
+     //           totalCount,
+     //           totalPages: Math.ceil(totalCount / limit),
+     //           currentPage: page,
+     //           data: entities,
+     //      };
+     // }
 
      async findChildren(
           parentId: number,
@@ -204,26 +204,26 @@ export class GroupService extends BaseService<GroupEntity> {
           };
      }
 
-     public override buildQuery(options: BasePaginationInput) {
-          const { parentId } = options;
+     // public override buildQuery(options: BasePaginationInput) {
+     //      const { parentId } = options;
 
-          const query = super.buildQuery(options);
+     //      // const query = super.buildQuery(options);
 
-          if (parentId === undefined) {
-               // lấy root
-               query.andWhere('entity.parent_id IS NULL');
-          } else {
-               // lấy con của node
-               query.andWhere('entity.parent_id = :parentId', { parentId });
-          }
+     //      if (parentId === undefined) {
+     //           // lấy root
+     //           query.andWhere('entity.parent_id IS NULL');
+     //      } else {
+     //           // lấy con của node
+     //           query.andWhere('entity.parent_id = :parentId', { parentId });
+     //      }
 
-          query.addSelect(subQuery => {
-               return subQuery
-                    .select('COUNT(1) > 0')
-                    .from(GroupEntity, 'child')
-                    .where('child.parent_id = entity.id');
-          }, 'hasChildren');
+     //      query.addSelect(subQuery => {
+     //           return subQuery
+     //                .select('COUNT(1) > 0')
+     //                .from(GroupEntity, 'child')
+     //                .where('child.parent_id = entity.id');
+     //      }, 'hasChildren');
 
-          return query;
-     }
+     //      return query;
+     // }
 }

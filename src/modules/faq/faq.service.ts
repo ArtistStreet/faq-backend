@@ -16,13 +16,13 @@ export class FaqService extends BaseService<FaqEntity> {
           super(repo);
      }
 
-     public buildQuery(options: BasePaginationInput) {
-          const query = super.buildQuery(options);
+     // public buildQuery(options: BasePaginationInput) {
+     //      const query = super.buildQuery(options);
 
-          query.leftJoinAndSelect('entity.category', 'category'); // Join từ bảng entity → category
+     //      query.leftJoinAndSelect('entity.category', 'category'); // Join từ bảng entity → category
 
-          return query;
-     }
+     //      return query;
+     // }
 
      async createWithCategories(input: CreateFaqInput): Promise<FaqEntity> {
           const { categoryIds, ...data } = input;

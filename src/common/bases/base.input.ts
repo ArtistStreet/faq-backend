@@ -41,7 +41,7 @@ export class BaseInput {
      })
      @IsOptional()
      @IsString()
-     sort?: string;
+     sort?: string[];
 
      @Column({ default: false })
      hasChildren: boolean;

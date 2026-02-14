@@ -1,4 +1,4 @@
-import { Args, Resolver, Query, Mutation, Int } from '@nestjs/graphql';
+import { Args, Resolver, Query, Mutation, Int, ResolveField, Parent } from '@nestjs/graphql';
 import { ProductService } from './product.service';
 import { ProductEntity } from 'src/entities/product.entity';
 import { BasePaginationInput } from 'src/common/bases/base.input';
@@ -7,17 +7,37 @@ import { IPaginatedType } from 'src/common/bases/base.model';
 import { CreateProductInput } from './dto/create-product.input';
 import { UserEntity } from 'src/entities/user.entity';
 import { AuthUser } from '../auth/auth.decorator';
-import { UseGuards } from '@nestjs/common';
+import { NotFoundException, UseGuards } from '@nestjs/common';
 import { GqlJwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CategoryEntity } from 'src/entities/category.entity';
+import { DataLoaderService } from 'src/data-loader/data-loaders.service';
 
-@Resolver()
+@Resolver(() => ProductEntity)
 @UseGuards(GqlJwtAuthGuard)
 export class ProductResolver {
-     constructor(private readonly productService: ProductService) { }
+     constructor(
+          private readonly productService: ProductService,
+          private readonly dataLoader: DataLoaderService,
+     ) { }
+
+     @ResolveField(() => [CategoryEntity], { nullable: true })
+     async category(@Parent() product: ProductEntity) {
+          return this.dataLoader
+               .relationBatchManyMany(CategoryEntity, 'product')
+               .load(product.id);
+     }
 
      @Query(() => ProductModel)
      async listProduct(@Args('input') body: BasePaginationInput): Promise<IPaginatedType<ProductEntity>> {
-          return this.productService.search(body, ['category']);
+          return this.productService.search(body);
+     }
+
+     @Query(() => ProductEntity)
+     async detailProduct(@Args('id', { type: () => Int }) id: number): Promise<ProductEntity> {
+          return this.productService.findOne(id).then((res) => {
+               if (!res) throw new NotFoundException();
+               return res;
+          })
      }
 
      @Mutation(() => ProductEntity)

@@ -14,7 +14,7 @@ export class AuthService extends BaseService<UserEntity> {
      constructor(
           private jwtService: JwtService,
           @InjectRepository(UserEntity)
-          private userRepo: Repository<UserEntity>,
+          public userRepo: Repository<UserEntity>,
      ) {
           super(userRepo);
      }

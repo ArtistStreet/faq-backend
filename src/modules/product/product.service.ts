@@ -62,5 +62,5 @@ export class ProductService extends BaseService<ProductEntity> {
           );
      }
 
-
+     // async getProductDetail
 }
