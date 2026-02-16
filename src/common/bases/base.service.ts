@@ -18,12 +18,16 @@ export class BaseService<T extends { id: number }> {
           return this.repository.find(options);
      }
 
-     async findOne(id: number | FindOneOptions<T>): Promise<T | null> {
-          if (typeof id === 'number') {
-               return this.repository.findOneBy({ id } as FindOptionsWhere<T>);
+     async findOne(options: number | FindOneOptions<T>): Promise<T | null> {
+          if (typeof options === 'number') {
+               return this.repository.findOne({
+                    where: { id: options } as FindOptionsWhere<T>,
+               });
           }
-          return this.repository.findOne(id);
+
+          return this.repository.findOne(options);
      }
+
 
      async findOneDetail(
           id: number,

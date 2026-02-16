@@ -33,7 +33,6 @@ export class AuthService extends BaseService<UserEntity> {
                name,
                email,
                password: hashedPass,
-               role: 1,
           })
 
           return this.userRepo.save(user);

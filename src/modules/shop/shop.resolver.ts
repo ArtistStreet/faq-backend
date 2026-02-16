@@ -6,11 +6,16 @@ import { UserEntity } from 'src/entities/user.entity';
 import { AuthUser } from '../auth/auth.decorator';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { GqlJwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { AuthService } from '../auth/auth.service';
+import { Role } from 'src/common/enums/role.enum';
 
 @Resolver()
 @UseGuards(GqlJwtAuthGuard)
 export class ShopResolver {
-     constructor(private readonly shopService: ShopService) { };
+     constructor(
+          private readonly shopService: ShopService,
+          private readonly userService: AuthService,
+     ) { };
 
      @Mutation(() => ShopEntity)
      async createShop(@Args('input') input: CreateShopInput, @AuthUser() auth: UserEntity): Promise<ShopEntity> {
@@ -18,7 +23,13 @@ export class ShopResolver {
           if (exist) {
                throw new BadRequestException('User already has a shop!!!');
           }
-          return this.shopService.create({ ...input, owner: { id: auth.id }, created_by: auth.id });
+          const shop = this.shopService.create({ ...input, owner: { id: auth.id }, created_by: auth.id });
+
+          await this.userService.updateOne(auth.id, {
+               role: Role.SELLER,
+          })
+
+          return shop;
      }
 
      @Mutation(() => ShopEntity)

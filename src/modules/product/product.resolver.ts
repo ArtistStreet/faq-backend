@@ -11,6 +11,7 @@ import { NotFoundException, UseGuards } from '@nestjs/common';
 import { GqlJwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CategoryEntity } from 'src/entities/category.entity';
 import { DataLoaderService } from 'src/data-loader/data-loaders.service';
+import { Role } from 'src/common/enums/role.enum';
 
 @Resolver(() => ProductEntity)
 @UseGuards(GqlJwtAuthGuard)
@@ -28,7 +29,15 @@ export class ProductResolver {
      }
 
      @Query(() => ProductModel)
-     async listProduct(@Args('input') body: BasePaginationInput): Promise<IPaginatedType<ProductEntity>> {
+     async listProduct(@Args('input') body: BasePaginationInput,
+          @AuthUser() auth: UserEntity
+     ): Promise<IPaginatedType<ProductEntity>> {
+          if ((auth.role) === Role.SELLER) {
+               body.filters = [
+                    ...(body.filters || []),
+                    `shop.owner.id:=(${auth.id})`
+               ]
+          }
           return this.productService.search(body);
      }
 
