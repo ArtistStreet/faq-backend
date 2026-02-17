@@ -48,6 +48,7 @@ export class AuthResolver {
           return this.authService.resetPassword(token, newPassword);
      }
 
+     @UseGuards(GqlJwtAuthGuard)
      @Mutation(() => Boolean)
      async deleteUser(@Args('id', { type: () => Int }) id: number, @AuthUser() auth: UserEntity) {
           await this.authService.softDelete(id, auth.id);

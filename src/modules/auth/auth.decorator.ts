@@ -4,19 +4,19 @@ import { UserEntity } from '../../entities/user.entity';
 
 // Dùng cho cả REST và GraphQL
 export const AuthUser = createParamDecorator((_: unknown, context: ExecutionContext): UserEntity => {
-    const request = getRequest(context);
+     const request = getRequest(context);
 
-    if (!request?.user) {
-        throw new UnauthorizedException('User not authenticated');
-    }
+     if (!request?.user) {
+          // throw new UnauthorizedException('User not authenticated');
+     }
 
-    return request.user;
+     return request.user;
 });
 
 function getRequest(context: ExecutionContext) {
-    if (context.getType() === 'http') {
-        return context.switchToHttp().getRequest(); // REST
-    }
-    const gqlContext = GqlExecutionContext.create(context);
-    return gqlContext.getContext().req; // GraphQL
+     if (context.getType() === 'http') {
+          return context.switchToHttp().getRequest(); // REST
+     }
+     const gqlContext = GqlExecutionContext.create(context);
+     return gqlContext.getContext().req; // GraphQL
 }

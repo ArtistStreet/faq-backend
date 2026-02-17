@@ -55,6 +55,7 @@ export class ProductEntity extends BaseEntity {
      @Column({ nullable: true })
      status: ProductStatus;
 
+     @Field({ nullable: true })
      @ManyToOne(() => ShopEntity, { eager: false })
      @JoinColumn({ name: 'shop_id' })
      shop: ShopEntity;

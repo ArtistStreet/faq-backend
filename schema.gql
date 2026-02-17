@@ -75,6 +75,7 @@ type ProductEntity {
   stock: Float!
   category: [CategoryEntity!]
   status: Float
+  shop: ShopEntity
 }
 
 type CategoryEntity {
@@ -144,6 +145,7 @@ type Query {
   me: UserEntity!
   listUser(input: BasePaginationInput!): UserModel!
   listProduct(input: BasePaginationInput!): ProductModel!
+  publicListProduct(input: BasePaginationInput!): ProductModel!
   detailProduct(id: Int!): ProductEntity!
 }
 

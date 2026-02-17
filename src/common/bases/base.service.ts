@@ -127,6 +127,7 @@ export class BaseService<T extends { id: number }> {
 
      async search(options: BasePaginationInput): Promise<IPaginatedType<T>> {
           const query = this.buildQuery(options);
+          console.log(query.getSql());
 
           const totalCount = await query.getCount();
 
