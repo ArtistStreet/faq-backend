@@ -10,6 +10,8 @@ import { IPaginatedType } from 'src/common/bases/base.model';
 import { GqlJwtAuthGuard } from './guards/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { Roles } from './decorators/roles.decorator';
+import { Role } from 'src/common/enums/role.enum';
 
 @Resolver()
 export class AuthResolver {
@@ -49,9 +51,10 @@ export class AuthResolver {
      }
 
      @UseGuards(GqlJwtAuthGuard)
+     @Roles(Role.ADMIN)
      @Mutation(() => Boolean)
-     async deleteUser(@Args('id', { type: () => Int }) id: number, @AuthUser() auth: UserEntity) {
-          await this.authService.softDelete(id, auth.id);
+     async deleteUser(@Args('id', { type: () => Int }) id: number) {
+          await this.authService.delete(id);
           return true;
      }
 }

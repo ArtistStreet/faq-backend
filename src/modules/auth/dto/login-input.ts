@@ -10,6 +10,9 @@ export class RegisterInput {
 
      @Field()
      password: string;
+
+     // @Field({ nullable: true })
+     // role?: number;
 }
 
 @InputType()

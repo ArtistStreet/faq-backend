@@ -28,7 +28,6 @@ export class BaseService<T extends { id: number }> {
           return this.repository.findOne(options);
      }
 
-
      async findOneDetail(
           id: number,
           relations?: FindOptionsRelations<T>
@@ -127,7 +126,6 @@ export class BaseService<T extends { id: number }> {
 
      async search(options: BasePaginationInput): Promise<IPaginatedType<T>> {
           const query = this.buildQuery(options);
-          console.log(query.getSql());
 
           const totalCount = await query.getCount();
 

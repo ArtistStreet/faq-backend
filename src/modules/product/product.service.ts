@@ -25,7 +25,7 @@ export class ProductService extends BaseService<ProductEntity> {
           const { categoryIds, ...data } = input;
 
           const shop = await this.shopRepository.findOne({
-               where: { owner: { id: auth.id } }
+               where: { owner: { id: auth.id } },
           });
 
           if (!shop) {

@@ -12,7 +12,6 @@ import { GqlJwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CategoryEntity } from 'src/entities/category.entity';
 import { DataLoaderService } from 'src/data-loader/data-loaders.service';
 import { Role } from 'src/common/enums/role.enum';
-import { ShopEntity } from 'src/entities/shop.entity';
 
 @Resolver(() => ProductEntity)
 @UseGuards(GqlJwtAuthGuard)
@@ -29,14 +28,14 @@ export class ProductResolver {
                .load(product.id);
      }
 
-     @ResolveField(() => ShopEntity, { nullable: true })
-     async shop(@Parent() product: ProductEntity) {
-          if (!product.id) return null;
+     // @ResolveField(() => ShopEntity, { nullable: true })
+     // async shop(@Parent() product: ProductEntity) {
+     //      if (!product.id) return null;
 
-          return this.dataLoader
-               .relationBatchOne(ShopEntity)
-               .load(product.id);
-     }
+     //      return this.dataLoader
+     //           .relationBatchOne(ShopEntity)
+     //           .load(product.id);
+     // }
 
      @Query(() => ProductModel)
      async listProduct(@Args('input') body: BasePaginationInput,
@@ -60,7 +59,9 @@ export class ProductResolver {
 
      @Query(() => ProductEntity)
      async detailProduct(@Args('id', { type: () => Int }) id: number): Promise<ProductEntity> {
-          return this.productService.findOne(id).then((res) => {
+          return this.productService.findOne(
+               { where: { id }, relations: ['category', 'shop'] }
+          ).then((res) => {
                if (!res) throw new NotFoundException();
                return res;
           })
@@ -68,7 +69,6 @@ export class ProductResolver {
 
      @Mutation(() => ProductEntity)
      async createProduct(@Args('input') input: CreateProductInput, @AuthUser() auth: UserEntity): Promise<ProductEntity> {
-          console.log(auth.id);
           return this.productService.createProduct(input, auth);
      }
 
