@@ -69,4 +69,50 @@ export class CartService extends BaseService<CartEntity> {
 
           return found;
      }
+
+     async cartDetail(auth: UserEntity): Promise<CartEntity> {
+          const cart = await this.cartRepo.findOne({
+               where: { user: { id: auth.id } },
+               relations: ['cart_item', 'cart_item.product']
+          })
+
+          if (!cart) {
+               return this.cartRepo.create({
+                    user: auth,
+                    cart_item: []
+               })
+          }
+
+          return cart;
+     }
+
+     async removeFromCart(auth: UserEntity, productId: number): Promise<CartEntity> {
+          const cart = await this.cartRepo.findOne({
+               where: { user: { id: auth.id } },
+               relations: ['cart_item', 'cart_item.product']
+          })
+
+          if (!cart) throw new NotFoundException('Cart not found');
+
+          const item = cart.cart_item.find(i => { i.product.id === productId })
+
+          if (!item) throw new NotFoundException('Product no found');
+
+          await this.cartItemRepo.remove(item);
+
+          return this.cartDetail(auth);
+     }
+
+     async clearCart(auth: UserEntity): Promise<Boolean> {
+          const cart = await this.cartRepo.findOne({
+               where: { user: { id: auth.id } },
+               relations: ['cart_item']
+          })
+
+          if (!cart) throw new NotFoundException('Cart not found');
+
+          await this.cartItemRepo.remove(cart.cart_item);
+
+          return true;
+     }
 }
