@@ -8,6 +8,7 @@ import { UserEntity } from './user.entity';
 import { ProductStatus } from 'src/common/enums/unit.enum';
 import { ShopEntity } from './shop.entity';
 import { CartItemEntity } from './cart_item.entity';
+import { OrderItemEntity } from './order_item.entity';
 
 @ObjectType() // cho GraphQL
 @Entity('product') // tên bảng trong DB

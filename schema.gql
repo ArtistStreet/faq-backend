@@ -20,6 +20,27 @@ type GroupModel {
   data: [GroupEntity!]!
 }
 
+type OrderEntity {
+  id: Float!
+  created_by: Float
+  updated_by: Float
+  created_at: DateTime!
+  updated_at: String
+  createdByUser: UserEntity!
+  updatedByUser: UserEntity
+  desc: String!
+  total_price: Float!
+  payment_method: Float!
+  status: Float!
+  phone_number: String!
+  address: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type ShopEntity {
   id: Float!
   created_by: Float
@@ -33,11 +54,6 @@ type ShopEntity {
   address: String!
   rating: Float
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type UserEntity {
   id: Float!
@@ -221,6 +237,7 @@ type Mutation {
   createProduct(input: CreateProductInput!): ProductEntity!
   updateProduct(id: Int!, input: CreateProductInput!): ProductEntity!
   deleteProduct(id: Int!): Boolean!
+  checkout: OrderEntity!
 }
 
 input CreateGroupInput {

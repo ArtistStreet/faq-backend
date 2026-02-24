@@ -8,6 +8,7 @@ import { BasePaginationInput } from 'src/common/bases/base.input';
 import { AuthUser } from '../auth/auth.decorator';
 import { UserEntity } from 'src/entities/user.entity';
 import { IPaginatedType } from 'src/common/bases/base.model';
+import { OrderEntity } from 'src/entities/order.entity';
 
 @Resolver(() => CartEntity)
 @UseGuards(GqlJwtAuthGuard)
@@ -56,4 +57,13 @@ export class CartResolver {
      async clearCart(@AuthUser() auth: UserEntity) {
           return this.cartService.clearCart(auth);
      }
+
+     // @ResolveField(() => Int)
+     // total(@Parent() cart: CartEntity) {
+     //      if (!cart.cart_item) return 0;
+
+     //      return cart.cart_item.reduce((sum, item) =>
+     //           sum + item.quantity * item.product.price, 0
+     //      )
+     // }
 }

@@ -9,6 +9,7 @@ import { Decimal128 } from 'typeorm/browser';
 import { UserEntity } from './user.entity';
 import { OrderStatus, PaymentMethod, ProductStatus } from 'src/common/enums/unit.enum';
 import { OrderEntity } from './order.entity';
+import { ProductEntity } from './product.entity';
 
 
 @ObjectType() // cho GraphQL
@@ -30,11 +31,15 @@ export class OrderItemEntity extends BaseEntity {
      @Column()
      quantity: number;
 
-     @Field()
-     @Column()
-     status: ProductStatus;
+     // @Field()
+     // @Column()
+     // status: ProductStatus;
 
      @ManyToOne(() => OrderEntity, { eager: false })
      @JoinColumn({ name: 'order_id' })
      order: OrderEntity;
+
+     @ManyToOne(() => ProductEntity)
+     @Field(() => ProductEntity)
+     product: ProductEntity;
 }

@@ -1,8 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/common/bases/base.service';
 import { CartEntity } from 'src/entities/cart.entity';
 import { CartItemEntity } from 'src/entities/cart_item.entity';
+import { OrderEntity } from 'src/entities/order.entity';
+import { OrderItemEntity } from 'src/entities/order_item.entity';
 import { ProductEntity } from 'src/entities/product.entity';
 import { UserEntity } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
