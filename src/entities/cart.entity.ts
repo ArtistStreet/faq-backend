@@ -15,6 +15,7 @@ export class CartEntity extends BaseEntity {
      @JoinColumn({ name: 'user_id' })
      user: UserEntity;
 
+     @Field(() => [CartItemEntity])
      @OneToMany(() => CartItemEntity, orderItem => orderItem.cart)
      cart_item: CartItemEntity[];
 }

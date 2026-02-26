@@ -34,7 +34,7 @@ export class CartService extends BaseService<CartEntity> {
           }
 
           let cart = await this.cartRepo.findOne({
-               where: { id: auth.id },
+               where: { user: { id: auth.id } },
                relations: ['cart_item', 'cart_item.product']
           })
 
@@ -45,6 +45,13 @@ export class CartService extends BaseService<CartEntity> {
 
                cart = await this.cartRepo.save(cart);
           }
+
+          // for (const item of cart.cart_item) {
+          //      if (item.quantity > item.product.stock) {
+          //           throw new BadRequestException(`Not enough ${item.product.name}`)
+          //      }
+          // }
+          // console.log(cart)
 
           let existing = cart.cart_item.find(item => item.product.id === productId);
 

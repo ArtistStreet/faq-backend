@@ -55,6 +55,29 @@ type ShopEntity {
   rating: Float
 }
 
+type CartItemEntity {
+  id: Float!
+  created_by: Float
+  updated_by: Float
+  created_at: DateTime!
+  updated_at: String
+  createdByUser: UserEntity!
+  updatedByUser: UserEntity
+  quantity: Float!
+  product: ProductEntity!
+}
+
+type CartEntity {
+  id: Float!
+  created_by: Float
+  updated_by: Float
+  created_at: DateTime!
+  updated_at: String
+  createdByUser: UserEntity!
+  updatedByUser: UserEntity
+  cart_item: [CartItemEntity!]!
+}
+
 type UserEntity {
   id: Float!
   created_by: Float
@@ -163,6 +186,7 @@ type Query {
   listProduct(input: BasePaginationInput!): ProductModel!
   publicListProduct(input: BasePaginationInput!): ProductModel!
   detailProduct(id: Int!): ProductEntity!
+  detailCart: CartEntity!
 }
 
 input BasePaginationInput {
@@ -238,6 +262,9 @@ type Mutation {
   updateProduct(id: Int!, input: CreateProductInput!): ProductEntity!
   deleteProduct(id: Int!): Boolean!
   checkout: OrderEntity!
+  addToCart(quantity: Int!, productId: Int!): CartEntity!
+  removeCart(productId: Int!): CartEntity!
+  clearCart: Boolean!
 }
 
 input CreateGroupInput {

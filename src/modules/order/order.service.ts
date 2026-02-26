@@ -37,12 +37,6 @@ export class OrderService extends BaseService<OrderEntity> {
 
           if (!cart) throw new NotFoundException('Cart not found');
 
-          for (const item of cart.cart_item) {
-               if (item.quantity > item.product.stock) {
-                    throw new BadRequestException(`Not enough ${item.product.name}`)
-               }
-          }
-
           const order = this.orderRepo.create({
                buyer: auth,
           })

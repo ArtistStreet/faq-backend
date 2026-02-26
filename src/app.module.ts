@@ -13,6 +13,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ShopModule } from './modules/shop/shop.module';
 import { ProductModule } from './modules/product/product.module';
 import { OrderModule } from './modules/order/order.module';
+import { CartModule } from './modules/cart/cart.module';
 
 @Module({
      imports: [
@@ -41,6 +42,7 @@ import { OrderModule } from './modules/order/order.module';
           ShopModule,
           ProductModule,
           OrderModule,
+          CartModule,
      ],
      controllers: [AppController],
      providers: [AppService],

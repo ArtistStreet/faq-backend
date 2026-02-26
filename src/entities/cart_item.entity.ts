@@ -19,6 +19,7 @@ export class CartItemEntity extends BaseEntity {
      @JoinColumn({ name: 'cart_id' })
      cart: CartEntity;
 
+     @Field(() => ProductEntity)
      @ManyToOne(() => ProductEntity, { eager: true })
      @JoinColumn({ name: 'product_id' })
      product: ProductEntity;

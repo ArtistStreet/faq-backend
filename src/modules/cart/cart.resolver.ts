@@ -27,9 +27,7 @@ export class CartResolver {
      }
 
      @Query(() => CartEntity)
-     @UseGuards(GqlJwtAuthGuard)
      async detailCart(
-          @Args('id', { type: () => Int }) id: number,
           @AuthUser() auth: UserEntity
      ) {
           return this.cartService.findOne(
@@ -44,7 +42,6 @@ export class CartResolver {
      }
 
      @Mutation(() => CartEntity)
-     @UseGuards(GqlJwtAuthGuard)
      async removeCart(
           @Args('productId', { type: () => Int }) productId: number,
           @AuthUser() auth: UserEntity
@@ -53,7 +50,6 @@ export class CartResolver {
      }
 
      @Mutation(() => Boolean)
-     @UseGuards(GqlJwtAuthGuard)
      async clearCart(@AuthUser() auth: UserEntity) {
           return this.cartService.clearCart(auth);
      }

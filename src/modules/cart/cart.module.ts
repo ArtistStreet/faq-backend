@@ -8,11 +8,12 @@ import { DataLoaderModule } from 'src/data-loader/data-loaders.module';
 import { CategoryEntity } from 'src/entities/category.entity';
 import { OrderEntity } from 'src/entities/order.entity';
 import { OrderItemEntity } from 'src/entities/order_item.entity';
+import { ProductEntity } from 'src/entities/product.entity';
 
 @Module({
      imports: [
           TypeOrmModule.forFeature([CartEntity, CategoryEntity, CartItemEntity,
-               OrderEntity, OrderItemEntity]),
+               OrderEntity, OrderItemEntity, ProductEntity]),
           DataLoaderModule,
      ],
      providers: [CartResolver, CartService]
