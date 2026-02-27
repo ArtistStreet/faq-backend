@@ -33,7 +33,7 @@ export class CartResolver {
           return this.cartService.findOne(
                {
                     where: { user: { id: auth.id } },
-                    relations: ['cart_item', 'cart_item.product']
+                    relations: ['cart_item', 'cart_item.product', 'cart_item.product.shop']
                }
           ).then((res) => {
                if (!res) throw new NotFoundException();
@@ -41,13 +41,20 @@ export class CartResolver {
           })
      }
 
-     @Mutation(() => CartEntity)
+     @Mutation(() => Boolean)
      async removeCart(
           @Args('productId', { type: () => Int }) productId: number,
           @AuthUser() auth: UserEntity
      ) {
-          return this.cartService.removeFromCart(auth, productId);
+          await this.cartService.removeFromCart(auth, productId);
+          return true;
      }
+
+     // @Mutation(() => Boolean)
+     // async removeCart(@Args('productId', { type: () => Int }) productId: number, @AuthUser() auth: UserEntity) {
+     //      await this.cartService.softDelete(productId, auth.id);
+     //      return true;
+     // }
 
      @Mutation(() => Boolean)
      async clearCart(@AuthUser() auth: UserEntity) {
