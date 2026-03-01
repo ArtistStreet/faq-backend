@@ -252,6 +252,7 @@ type Mutation {
   deleteCategory(id: Int!): Boolean!
   register(input: RegisterInput!): UserEntity!
   login(input: LoginInput!): LoginResponse!
+  updateProfile(input: UpdateUserInput!): LoginResponse!
   forgotPassword(email: String!): Boolean!
   resetPassword(token: String!, newPassword: String!): Boolean!
   deleteUser(id: Int!): Boolean!
@@ -315,6 +316,12 @@ input RegisterInput {
 input LoginInput {
   email: String!
   password: String!
+}
+
+input UpdateUserInput {
+  name: String
+  phone_number: String
+  email: String
 }
 
 input CreateShopInput {

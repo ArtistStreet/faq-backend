@@ -6,14 +6,6 @@ import { UserEntity } from "./user.entity";
 @ObjectType()
 @Entity('addresses')
 export class AddressEntity extends BaseEntity {
-     @Field()
-     @Column()
-     full_name: string;
-
-     @Field()
-     @Column()
-     phone: string;
-
      // @Field()
      // @Column()
      // province: string;

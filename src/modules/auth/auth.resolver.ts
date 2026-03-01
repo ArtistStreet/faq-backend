@@ -1,7 +1,7 @@
 import { Args, Resolver, Mutation, Int, Query } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { LoginResponse } from 'src/modules/auth/dto/login-respone';
-import { LoginInput, RegisterInput } from 'src/modules/auth/dto/login-input';
+import { LoginInput, RegisterInput, UpdateUserInput } from 'src/modules/auth/dto/login-input';
 import { UserEntity } from 'src/entities/user.entity';
 import { AuthUser } from './auth.decorator';
 import { BasePaginationInput } from 'src/common/bases/base.input';
@@ -36,6 +36,14 @@ export class AuthResolver {
      @Mutation(() => LoginResponse)
      async login(@Args('input') input: LoginInput): Promise<LoginResponse> {
           return this.authService.login(input);
+     }
+
+     @Mutation(() => LoginResponse)
+     async updateProfile(
+          @Args('input') input: UpdateUserInput,
+          @AuthUser() auth: UserEntity,
+     ): Promise<UserEntity> {
+          return this.authService.updateOne(auth.id, input);
      }
 
      @Mutation(() => Boolean)
